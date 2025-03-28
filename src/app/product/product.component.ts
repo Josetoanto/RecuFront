@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { ProductService } from '../product.service';
 import { FormsModule } from '@angular/forms';
-import { NgIf } from '@angular/common';
+import { NgFor } from '@angular/common';
 
 @Component({
   selector: 'app-product',
-  imports: [FormsModule,NgIf],
+  imports: [FormsModule,NgFor],
   templateUrl: './product.component.html',
   styleUrls: ['./product.component.css']
 })
@@ -18,20 +18,16 @@ export class ProductComponent implements OnInit {
     descuento: false
   };
 
-  lastProduct: any = null;
+  temporaryProducts: any[] = []; // Arreglo para productos temporales
   discountCount: number = 0;
 
   constructor(private productService: ProductService) { }
 
   ngOnInit(): void {
-    // Iniciar el polling para obtener el último producto agregado
-    this.getLastProduct();
-    
-    // Iniciar el long polling para contar los productos con descuento
+    this.getTemporaryProducts();
     this.getDiscountProductCount();
   }
 
-  // Método para agregar un producto
   addProduct(): void {
     this.productService.addProduct(this.product).subscribe(
       response => {
@@ -44,31 +40,39 @@ export class ProductComponent implements OnInit {
     );
   }
 
-  // Método para obtener el último producto agregado
-  getLastProduct(): void {
+  getTemporaryProducts(): void {
     setInterval(() => {
-      this.productService.getLastAddedProduct().subscribe(
-        (product) => {
-          this.lastProduct = product;
+      this.productService.getTemporaryProducts().subscribe(
+        (products) => {
+          if (Array.isArray(products)) { // Valida que sea un array
+            this.temporaryProducts = products;
+          } else {
+            console.error('La respuesta no es un array:', products);
+            this.temporaryProducts = []; // Vacía la lista en caso de error
+          }
         },
         (error) => {
-          console.error('Error al obtener el último producto:', error);
+          console.error('Error al obtener productos temporales:', error);
         }
       );
-    }, 5000); // Obtiene el último producto cada 5 segundos
+    }, 5000);
   }
-
-  // Método para obtener la cantidad de productos con descuento
+  
   getDiscountProductCount(): void {
-    setInterval(() => {
-      this.productService.countProductsInDiscount().subscribe(
-        (count) => {
-          this.discountCount = count.productos_con_descuento;
-        },
-        (error) => {
-          console.error('Error al obtener la cantidad de productos con descuento:', error);
+    this.productService.countProductsInDiscount().subscribe({
+      next: (data) => {
+        console.log('Flujo recibido:', data);
+        try {
+          const parsedData = JSON.parse(data);
+          console.log('Datos procesados:', parsedData);
+          this.discountCount = parsedData.productos_con_descuento; // Actualizamos la vista
+        } catch (error) {
+          console.error('No se pudo parsear la respuesta:', error);
         }
-      );
-    }, 5000); // Obtiene el conteo cada 5 segundos
+      },
+      error: (error) => {
+        console.error('Error en la conexión Long Polling:', error);
+      }
+    });
   }
 }

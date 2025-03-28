@@ -7,22 +7,20 @@ import { Observable } from 'rxjs';
 })
 export class ProductService {
 
-  private apiUrl = 'http://localhost:8080'; // Dirección base de tu API
+  private apiUrl = 'http://localhost:8080'; 
 
   constructor(private http: HttpClient) { }
 
-  // Método para agregar un producto
   addProduct(product: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/addProduct`, product);
   }
 
-  // Método para obtener el último producto agregado
-  getLastAddedProduct(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/isNewProductAdded`);
+  getTemporaryProducts(): Observable<any[]> { // Cambia el tipo de retorno a un array
+    return this.http.get<any[]>(`${this.apiUrl}/getTemporaryProducts`);
   }
+  
 
-  // Método para contar productos con descuento (Long Polling)
   countProductsInDiscount(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/countProductInDiscount`);
+    return this.http.get(`${this.apiUrl}/countProductInDiscount`, { responseType: 'text', observe: 'body' });
   }
 }

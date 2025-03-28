@@ -27,13 +27,15 @@
   
     <hr />
   
-    <h2>Último Producto Agregado:</h2>
-    <div *ngIf="lastProduct">
-      <p>Nombre: {{ lastProduct.nombre }}</p>
-      <p>Precio: {{ lastProduct.precio }}</p>
-      <p>Código: {{ lastProduct.codigo }}</p>
-      <p>Descuento: {{ lastProduct.descuento ? 'Sí' : 'No' }}</p>
-    </div>
+    <h2>Productos Añadidos Recientemente:</h2>
+    <ul>
+      <li *ngFor="let product of temporaryProducts">
+        <p>Nombre: {{ product.nombre }}</p>
+        <p>Precio: {{ product.precio }}</p>
+        <p>Código: {{ product.codigo }}</p>
+        <p>Descuento: {{ product.descuento ? 'Sí' : 'No' }}</p>
+      </li>
+    </ul>
   
     <hr />
   
