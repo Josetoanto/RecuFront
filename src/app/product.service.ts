@@ -15,11 +15,10 @@ export class ProductService {
     return this.http.post(`${this.apiUrl}/addProduct`, product);
   }
 
-  getTemporaryProducts(): Observable<any[]> { // Cambia el tipo de retorno a un array
+  getTemporaryProducts(): Observable<any[]> { 
     return this.http.get<any[]>(`${this.apiUrl}/getTemporaryProducts`);
   }
   
-
   countProductsInDiscount(): Observable<any> {
     return this.http.get(`${this.apiUrl}/countProductInDiscount`, { responseType: 'text', observe: 'body' });
   }

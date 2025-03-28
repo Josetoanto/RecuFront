@@ -18,7 +18,7 @@ export class ProductComponent implements OnInit {
     descuento: false
   };
 
-  temporaryProducts: any[] = []; // Arreglo para productos temporales
+  temporaryProducts: any[] = []; 
   discountCount: number = 0;
 
   constructor(private productService: ProductService) { }
@@ -32,7 +32,7 @@ export class ProductComponent implements OnInit {
     this.productService.addProduct(this.product).subscribe(
       response => {
         console.log('Producto agregado:', response);
-        this.product = { nombre: '', precio: 0, codigo: '', descuento: false }; // Limpiar formulario
+        this.product = { nombre: '', precio: 0, codigo: '', descuento: false }; 
       },
       error => {
         console.error('Error al agregar producto:', error);
@@ -44,11 +44,11 @@ export class ProductComponent implements OnInit {
     setInterval(() => {
       this.productService.getTemporaryProducts().subscribe(
         (products) => {
-          if (Array.isArray(products)) { // Valida que sea un array
+          if (Array.isArray(products)) {
             this.temporaryProducts = products;
           } else {
             console.error('La respuesta no es un array:', products);
-            this.temporaryProducts = []; // Vacía la lista en caso de error
+            this.temporaryProducts = [];
           }
         },
         (error) => {
@@ -65,7 +65,7 @@ export class ProductComponent implements OnInit {
         try {
           const parsedData = JSON.parse(data);
           console.log('Datos procesados:', parsedData);
-          this.discountCount = parsedData.productos_con_descuento; // Actualizamos la vista
+          this.discountCount = parsedData.productos_con_descuento; 
         } catch (error) {
           console.error('No se pudo parsear la respuesta:', error);
         }
